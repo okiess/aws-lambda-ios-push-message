@@ -3,14 +3,24 @@ var apn = require('apn');
 exports.handler = function(event, context) {
   console.log("Running aws ios push message function");
   console.log("==================================");
-  console.log("event", event);
+  // console.log("event", event);
 
   var messageCounter = 0;
   var options = {
-    production: (event.stage == 'production'),
-    cert: (event.stage == 'production' ? "prod_cert.pem" : "dev_cert.pem"),
-    key: (event.stage == 'production' ? "prod_key.pem" : "dev_key.pem")
+    production: (event.stage == 'production')
   };
+  
+  if (event.cert != null && event.key != null) {
+    // You can send cert and key with the event data if you're using this lambda function for 
+    // multiple apps...
+    options.cert = new Buffer(event.cert, "base64");
+    options.key = new Buffer(event.key, "base64");
+  } else {
+    // ...or provide the cert and key as files within the lambda function package (more secure).
+    options.cert = (event.stage == 'production' ? "prod_cert.pem" : "dev_cert.pem");
+    options.key = (event.stage == 'production' ? "prod_key.pem" : "dev_key.pem");
+  }
+  
   var service = new apn.connection(options);
 
   service.on('connected', function() {
