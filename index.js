@@ -63,9 +63,10 @@ exports.handler = function(event, context) {
   if (event.expiry != null) {
     note.expiry = event.expiry;  
   }
-  note.sound = (event.sound != null && event.content_available == null ? event.sound : "default");
   if (event.content_available != null) {
     note.content_available = event.content_available;
+  } else {
+    note.sound = (event.sound != null ? event.sound : "default");
   }
   if (event.category != null) {
     note.category = event.category;
