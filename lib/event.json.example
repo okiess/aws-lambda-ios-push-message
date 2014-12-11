@@ -1,0 +1,10 @@
+{
+  "platform": "ios",
+  "stage": "production",
+  "tokens": ["<insert token here>", "<insert token here>"],
+  "alert_message": "You have a message!",
+  "badge_number": 1,
+  "custom_data": {
+    "foo": "bar"
+  }
+}
