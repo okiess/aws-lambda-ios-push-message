@@ -57,9 +57,6 @@ exports.handler = function(event, context) {
   if (event.badge_number != null) {
     note.badge = event.badge_number;
   }
-  if (event.alert_message != null) {
-    note.alert = event.alert_message;
-  }
   if (event.expiry != null) {
     note.expiry = event.expiry;  
   }
@@ -67,6 +64,10 @@ exports.handler = function(event, context) {
     note.content_available = event.content_available;
   } else {
     note.sound = (event.sound != null ? event.sound : "default");
+    
+    if (event.alert_message != null) {
+      note.alert = event.alert_message;
+    }
   }
   if (event.category != null) {
     note.category = event.category;
