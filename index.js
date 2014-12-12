@@ -22,7 +22,8 @@ exports.handler = function(event, context) {
   }
   
   var service = new apn.connection(options);
-
+  var tks = (event.tokens != null ? event.tokens : []).reduce(function(a, b) { if (a.indexOf(b) < 0) a.push(b); return a;}, []);
+  
   service.on('connected', function() {
     console.log("Connected");
   });
@@ -30,7 +31,7 @@ exports.handler = function(event, context) {
   service.on('transmissionError', function(errCode, notification, device) {
     console.log("Notification caused error: " + errCode + " for device ", device, notification);
     messageCounter++;
-    if (messageCounter == event.tokens.length) {
+    if (messageCounter == tks.length) {
       setTimeout(function () {
         context.done();
       }, 1000);
@@ -38,10 +39,9 @@ exports.handler = function(event, context) {
   });
 
   service.on('transmitted', function(notification, device) {
-    console.log("Notification transmitted to:" + device.token.toString('hex'));
+    console.log("Notification transmitted to: " + device.token.toString('hex'));
     messageCounter++;
-    
-    if (messageCounter == event.tokens.length) {
+    if (messageCounter == tks.length) {
       setTimeout(function () {
         context.done();
       }, 1000);
@@ -68,7 +68,7 @@ exports.handler = function(event, context) {
     note.badge = event.badge_number;
   }
   if (event.expiry != null) {
-    note.expiry = event.expiry;  
+    note.expiry = event.expiry;
   }
   if (event.content_available != null) {
     note.contentAvailable = event.content_available;
@@ -87,5 +87,6 @@ exports.handler = function(event, context) {
   if (event.custom_data != null) {
     note.payload = event.custom_data;
   }
-  service.pushNotification(note, event.tokens);
+  
+  service.pushNotification(note, tks);
 }
